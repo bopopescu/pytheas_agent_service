@@ -7,7 +7,7 @@ from pymongo import MongoClient
 import config
 
 
-class DataImporter:
+class DataManagerMongo:
 
     def __init__(self):
         self.connect_timeout_ms = 30000;

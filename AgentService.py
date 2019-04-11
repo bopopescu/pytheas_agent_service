@@ -8,7 +8,7 @@ from datetime import datetime
 class AgentService:
 
     def __init__(self):
-        self.date_importer = DataImporter.DataImporter()
+        self.date_importer = DataImporter.DataManagerMongo()
         self.bl = AgentBL.AgentServiceBL()
 
     def calculate_matrix_for_city(self, city_name):
