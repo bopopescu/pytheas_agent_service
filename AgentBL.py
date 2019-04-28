@@ -92,26 +92,6 @@ class AgentServiceBL:
         norms = np.array([np.sqrt(np.diagonal(sim))])
         return (sim / (norms / norms.T))
 
-    def predict1(self, original_matrix, similarity_matrix, mean_point, type='user'):
-        if type == 'user':
-            mean_user_rating = original_matrix.mean(axis=1)
-            # We use np.newaxis so that mean_user_rating has same format as ratings
-            ratings_diff = (original_matrix - mean_user_rating[:, np.newaxis])
-            # print('hey')
-            ratings_diff = original_matrix;
-            prediction = mean_user_rating[:, np.newaxis] + similarity_matrix.dot(ratings_diff) / np.array(
-                [np.abs(similarity_matrix).sum(axis=1)]).T
-        elif type == 'item':
-            prediction = original_matrix.dot(similarity_matrix) / np.array([np.abs(similarity_matrix).sum(axis=1)])
-
-        # print (pred);
-
-        for row in range(len(prediction)):
-            for cell in range(len(prediction[0])):
-                prediction[row][cell] += mean_point[row]
-
-        return prediction
-
     def predict(self, original_matrix, similarity, meanPoint, type='user'):
 
         if type == 'user':

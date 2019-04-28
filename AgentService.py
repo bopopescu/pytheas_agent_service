@@ -21,7 +21,7 @@ class AgentService:
         return m_predicted;
 
     def predict_attractions_for_city(self, city_name):
-        df_users_tags, df_users_ratings, attractions_list = self.date_importer_sql.load_data_from_DB(city_name)
+        df_users_tags, df_users_ratings, attractions_list = self.date_importer_sql.load_data_from_db(city_name)
         df_users_tags[np.isnan(df_users_tags)] = 0
 
         m_predicted = self.calculate_matrix(df_users_tags, df_users_ratings, attractions_list)

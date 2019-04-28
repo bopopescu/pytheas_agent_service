@@ -31,7 +31,7 @@ class DataManagerSQL:
         user_name = user_name + '_agent_user'
         self.run_stored_procedure("pytheas.add_internal_user_attraction", [user_name, attraction_name, rate])
 
-    def load_data_from_DB(self, city_name):
+    def load_data_from_db(self, city_name):
 
         df_users_tags = []
         df_users_ratings = []
