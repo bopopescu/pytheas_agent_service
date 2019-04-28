@@ -7,7 +7,7 @@ from pymongo import MongoClient
 import config
 
 
-class DataManagerMongoDb:
+class DataManagerMongoDB:
 
     def __init__(self):
 
@@ -140,6 +140,6 @@ class DataManagerMongoDb:
         return df_users_tags, df_users_ratings, attractions_list;
 
 
-#_db = DataManagerMongoDb();
+#_db = DataManagerMongoDB();
 #df_users_tags, df_users_ratings, attractions_list = _db.load_data_from_service('paris');
 #print('finished')

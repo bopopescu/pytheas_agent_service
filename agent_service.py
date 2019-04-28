@@ -1,6 +1,6 @@
-import DataManagerMongoDB
-import DataManagerSQL
-import AgentBL
+import data_manager_mongo_db
+import data_manager_sql
+import agent_business_logic
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
 from datetime import datetime
@@ -9,9 +9,9 @@ from datetime import datetime
 class AgentService:
 
     def __init__(self):
-        self.date_importer = DataManagerMongoDB.DataManagerMongoDb();
-        self.bl = AgentBL.AgentServiceBL();
-        self.date_importer_sql = DataManagerSQL.DataManagerSQL();
+        self.date_importer = data_manager_mongo_db.DataManagerMongoDB();
+        self.bl = agent_business_logic.AgentServiceBL();
+        self.date_importer_sql = data_manager_sql.DataManagerSQL();
 
     def predict_initial_attractions_for_city(self, city_name):
         df_users_tags, df_users_ratings, attractions_list = self.date_importer.load_data_from_service(city_name)
