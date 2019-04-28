@@ -1,12 +1,13 @@
 import mysql.connector
 from mysql.connector import Error
+import pandas as pn
 
 import config
 
 
 class DataManagerSQL:
 
-    def _init_(self):
+    def __init__(self):
 
         self.db_client = mysql.connector.connect(
             host=config.HOST,
@@ -17,26 +18,78 @@ class DataManagerSQL:
         self.cursor = self.db_client.cursor()
 
     def insert_internal_user(self, user_name):
-        query = "INSERT INTO pytheas.agent_internal_users (username, create_time) VALUES ('" + user_name + "', UTC_TIMESTAMP());"
-        self.insert_to_db(query)
+        user_name = user_name + '_agent_user'
+        sp_results = self.run_stored_procedure("pytheas.add_internal_user", [user_name])
+        for result in sp_results:
+            return (result.fetchall()[0][0])
 
-    def insert_tags_for_internal_user(self, user_name, tags):
-        for tag in tags:
-            query = "INSERT INTO `pytheas`.`agent_internal_users_tags` VALUES ('" + user_name + "', '" + tag + "')"
-            self.insert_to_db(query)
+    def insert_tag_for_internal_user(self, user_name, tag):
+        user_name = user_name + '_agent_user'
+        self.run_stored_procedure("pytheas.add_internal_user_tag", [user_name, tag])
 
-    def insert_ratings_for_internal_user(self, user_name, attractions):
-        for attraction in attractions:
-            query = "INSERT INTO `pytheas`.`agent_internal_users_tags` VALUES ('" + user_name;
-            query += "', 'empty', '" + attraction['name'] + "', '" + attraction['rate'] + "')"
-            self.insert_to_db(query)
+    def insert_ratings_for_internal_user(self, user_name, attraction_name, rate):
+        user_name = user_name + '_agent_user'
+        self.run_stored_procedure("pytheas.add_internal_user_attraction", [user_name, attraction_name, rate])
+
+    def load_data_from_DB(self, city_name):
+
+        df_users_tags = []
+        df_users_ratings = []
+        attractions_list = []
+
+        users = []
+        users_tags = {}
+        users_ratings = {}
+
+        att_results = self.run_stored_procedure("pytheas.get_attractions_by_city", [city_name])
+        for result in att_results:
+            attractions_list_result = result.fetchall()
+            for att in attractions_list_result:
+                attractions_list.append(att[0])
+
+        users_results = self.run_stored_procedure("pytheas.get_users_by_city", [city_name])
+        for result in users_results:
+            users = result.fetchall()
+            for row in users:
+                # get user tags
+                user_tags = {}
+                user_tags_results = self.run_stored_procedure("pytheas.get_user_tags", [row[0]])
+                for result in user_tags_results:
+                    fetched_results = result.fetchall()
+                    for user_tag in fetched_results:
+                        user_tags[user_tag[1]] = 1
+                users_tags[row[1]] = user_tags
+
+                # get user rates
+                attractions = []
+                user_ratings_results = self.run_stored_procedure("pytheas.get_user_ratings", [row[0]])
+                for result in user_ratings_results:
+                    fetched_results = result.fetchall()
+                    for user_rating in fetched_results:
+                        attractions.append([user_rating[1], user_rating[2]])
+                users_ratings[row[1]] = attractions
+
+        df_users_ratings = pn.DataFrame.from_dict(users_ratings, orient='index')
+        df_users_ratings.sort_index(inplace=True)
+        df_users_ratings.insert(0, '_ID', range(0, 0 + len(df_users_ratings)))
+
+        df_users_tags = pn.DataFrame.from_dict(users_tags, orient='index')
+        df_users_tags.sort_index(inplace=True)
+        return df_users_tags, df_users_ratings, attractions_list;
 
     def insert_to_db(self, query):
         print(query)
         self.cursor.execute(query)
         self.db_client.commit()
 
+    def run_stored_procedure(self, procedur_name, args):
+        print(procedur_name)
+        print(args)
+        self.cursor.callproc(procedur_name, args)
+        self.db_client.commit()
+        return self.cursor.stored_results()
 
-#_db = DataManagerSQL();
-# response = _db.load_attraction_for_city();
-#resi1 = _db.insert_internal_user("userName")
+# _db = DataManagerSQL();
+# response1, response2, response3 = _db.load_data_from_DB('paris');
+# resi1 =  _db.insert_internal_user('fsgdsfdg')
+# print(resi1)
