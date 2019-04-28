@@ -5,9 +5,10 @@ from bson import json_util
 from pymongo import MongoClient
 
 import config
+from data_manager_base import DataManageBase
 
 
-class DataManagerMongoDB:
+class DataManagerMongoDB(DataManageBase):
 
     def __init__(self):
 
@@ -48,7 +49,8 @@ class DataManagerMongoDB:
         # insert to DB
         return df_users_tags;
 
-    def load_data_from_service(self, city_name):
+    # overriding abstract method
+    def load_users_attractions_tags(self, city_name):
         mongo_response_documents = self.collection.find({})  # .limit(5)
         json_documents = json.loads(json_util.dumps(mongo_response_documents))
         self.json_documents = json_documents
@@ -139,7 +141,6 @@ class DataManagerMongoDB:
 
         return df_users_tags, df_users_ratings, attractions_list;
 
-
-#_db = DataManagerMongoDB();
-#df_users_tags, df_users_ratings, attractions_list = _db.load_data_from_service('paris');
-#print('finished')
+# _db = DataManagerMongoDB();
+# df_users_tags, df_users_ratings, attractions_list = _db.load_data_from_service('paris');
+# print('finished')

@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="95a22184-771e-40ca-89cf-1fb365d102d1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AgentBL.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent_business_logic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AgentService.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataManagerMongoDB.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_manager_mongo_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataManagerSQL.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_manager_sql.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_manager_base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_manager_mongo_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_manager_mongo_db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_manager_sql.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_manager_sql.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,8 +21,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/agent_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="680">
-              <caret line="40" column="38" selection-start-line="40" selection-start-column="30" selection-end-line="40" selection-end-column="38" />
+            <state relative-caret-position="170">
+              <caret line="29" column="118" lean-forward="true" selection-start-line="29" selection-start-column="118" selection-end-line="29" selection-end-column="118" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -31,26 +30,32 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data_manager_sql.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-513">
-              <caret line="38" selection-start-line="38" selection-end-line="38" />
+            <state relative-caret-position="51">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data_manager_mongo_db.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="41" lean-forward="true" selection-start-line="10" selection-start-column="41" selection-end-line="10" selection-end-column="41" />
               <folding>
-                <element signature="e#0#22#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/data_manager_mongo_db.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data_manager_base.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="51">
+              <caret line="3" column="16" lean-forward="true" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -83,6 +88,8 @@
       <find>load_attraction_for_city</find>
       <find>dataImporterSQL</find>
       <find>predict</find>
+      <find>date_importer</find>
+      <find>load_data_from_db</find>
       <find>predict(</find>
     </findStrings>
   </component>
@@ -98,6 +105,10 @@
         <option value="$PROJECT_DIR$/DataManagerSQL.py" />
         <option value="$PROJECT_DIR$/AgentService.py" />
         <option value="$PROJECT_DIR$/DataManagerMongoDB.py" />
+        <option value="$PROJECT_DIR$/data_manager_sql.py" />
+        <option value="$PROJECT_DIR$/agent_service.py" />
+        <option value="$PROJECT_DIR$/data_manager_base.py" />
+        <option value="$PROJECT_DIR$/data_manager_mongo_db.py" />
       </list>
     </option>
   </component>
@@ -218,11 +229,11 @@
     <frame x="-1928" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49932158" visible="true" weight="0.1654373" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49932158" visible="true" weight="0.1654373" />
       <window_info id="Structure" order="1" sideWeight="0.5006784" side_tool="true" weight="0.1654373" />
       <window_info id="Favorites" order="2" sideWeight="0.5006784" side_tool="true" weight="0.1654373" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32936078" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32936078" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.20151679" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -245,6 +256,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/agent_business_logic.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1700">
@@ -255,33 +274,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_manager_sql.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-513">
-          <caret line="38" selection-start-line="38" selection-end-line="38" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/agent_service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="40" column="38" selection-start-line="40" selection-start-column="30" selection-end-line="40" selection-end-column="38" />
+        <state relative-caret-position="170">
+          <caret line="29" column="118" lean-forward="true" selection-start-line="29" selection-start-column="118" selection-end-line="29" selection-end-column="118" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/data_manager_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="16" lean-forward="true" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/data_manager_mongo_db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        <state relative-caret-position="170">
+          <caret line="10" column="41" lean-forward="true" selection-start-line="10" selection-start-column="41" selection-end-line="10" selection-end-column="41" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_manager_sql.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>

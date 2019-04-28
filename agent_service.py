@@ -9,19 +9,21 @@ from datetime import datetime
 class AgentService:
 
     def __init__(self):
-        self.date_importer = data_manager_mongo_db.DataManagerMongoDB();
+        self.date_importer_mongo = data_manager_mongo_db.DataManagerMongoDB();
         self.bl = agent_business_logic.AgentServiceBL();
         self.date_importer_sql = data_manager_sql.DataManagerSQL();
 
     def predict_initial_attractions_for_city(self, city_name):
-        df_users_tags, df_users_ratings, attractions_list = self.date_importer.load_data_from_service(city_name)
+        df_users_tags, df_users_ratings, attractions_list = self.date_importer_mongo.load_users_attractions_tags(city_name)
         df_users_tags[np.isnan(df_users_tags)] = 0
 
         m_predicted = self.calculate_matrix(df_users_tags, df_users_ratings, attractions_list)
+        self.store_datasets_to_db()
+
         return m_predicted;
 
     def predict_attractions_for_city(self, city_name):
-        df_users_tags, df_users_ratings, attractions_list = self.date_importer_sql.load_data_from_db(city_name)
+        df_users_tags, df_users_ratings, attractions_list = self.date_importer_sql.load_users_attractions_tags(city_name)
         df_users_tags[np.isnan(df_users_tags)] = 0
 
         m_predicted = self.calculate_matrix(df_users_tags, df_users_ratings, attractions_list)
@@ -51,10 +53,9 @@ class AgentService:
         self.df_users_tags = df_users_tags
         self.df_users_ratings = df_users_ratings
         self.attractions_list = attractions_list
-        self.mean_point = mean_point
-        self.similarity = m_similarity
-        self.user_ratings = df_users_ratings_calced_Centered
-        self.m_predicted = m_predicted
+        #self.mean_point = mean_point
+        #self.similarity = m_similarity
+        #self.user_ratings = df_users_ratings_calced_Centered
 
         return m_predicted
 
