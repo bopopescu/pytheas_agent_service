@@ -1,6 +1,6 @@
 import mysql.connector
-from mysql.connector import Error
 import pandas as pn
+import operator
 
 import config
 from data_manager_base import DataManageBase
@@ -22,7 +22,7 @@ class DataManagerSQL(DataManageBase):
         user_name = user_name + '_agent_user'
         sp_results = self.run_stored_procedure("pytheas.add_internal_user", [user_name])
         for result in sp_results:
-            return (result.fetchall()[0][0])
+            return result.fetchall()[0][0]
 
     def insert_tag_for_internal_user(self, user_name, tag):
         user_name = user_name + '_agent_user'
@@ -78,6 +78,28 @@ class DataManagerSQL(DataManageBase):
         df_users_tags = pn.DataFrame.from_dict(users_tags, orient='index')
         df_users_tags.sort_index(inplace=True)
         return df_users_tags, df_users_ratings, attractions_list;
+
+    def get_profile_rate_for_city(self, profile_id, city_id):
+        return_value = 0
+        db_results = self.run_stored_procedure("pytheas.get_profile_rate_for_city", [profile_id, city_id])
+        for result in db_results:
+            return_value = result.fetchall()
+        return float(return_value[0][0]);
+
+    def get_all_cities(self):
+        cities_list = []
+        db_results = self.run_stored_procedure("pytheas.get_all_cities", [])
+        for result in db_results:
+            cities_list = result.fetchall()
+        return cities_list
+
+    def get_profile_cities_rate(self, profile_id):
+        cities_ratings = {}
+
+        cities_list = self.get_all_cities();
+        for city_id, city_name in cities_list:
+            cities_ratings[city_id] = self.get_profile_rate_for_city(profile_id, city_id)
+        return sorted(cities_ratings.items(), key=operator.itemgetter(1), reverse=True)
 
     def insert_to_db(self, query):
         print(query)

@@ -13,6 +13,9 @@ class AgentService:
         self.bl = agent_business_logic.AgentServiceBL();
         self.date_importer_sql = data_manager_sql.DataManagerSQL();
 
+    def predict_profile_cities_rate(self, profile_id):
+        return self.date_importer_sql.get_profile_cities_rate(profile_id)
+
     def predict_initial_attractions_for_city(self, city_name):
         df_users_tags, df_users_ratings, attractions_list = self.date_importer_mongo.load_users_attractions_tags(city_name)
         df_users_tags[np.isnan(df_users_tags)] = 0
@@ -83,7 +86,9 @@ class AgentService:
 
 if __name__ == '__main__':
     agent_service = AgentService();
-    result = agent_service.predict_attractions_for_city('paris')
+    resX = agent_service.predict_profile_cities_rate(22)
+    print(resX)
+    #result = agent_service.predict_attractions_for_city('paris')
     # agent_service.store_datasets_to_db()
     # save to db
 
