@@ -32,52 +32,92 @@ class DataManagerSQL(DataManageBase):
         user_name = user_name + '_agent_user'
         self.run_stored_procedure("pytheas.add_internal_user_attraction", [user_name, attraction_name, rate])
 
-    # overriding abstract method
-    def load_users_attractions_tags(self, city_name):
 
+    def insert_profile_prediction(self, profile_id, city_id, attractions_rates):
+        global rates_attractions
+        rates_attractions = {}
+        for attraction_name in attractions_rates:
+            rate = attractions_rates[attraction_name]
+            rate_attractions = ''
+            if rate in rates_attractions.keys():  rate_attractions = rates_attractions[rate]
+            rate_attractions += "'" + attraction_name.replace("'", "''") + "',"
+            rates_attractions[rate] = rate_attractions
+
+        for rate in rates_attractions:
+            attractions = rates_attractions[rate][:-1]
+            print(rate)
+            print(attractions)
+            self.run_stored_procedure("pytheas.add_profile_attractions_prediction",
+                                      [int(profile_id), attractions, float(rate)])
+
+    def insert_profile_attraction_prediction(self, profile_id, city_id, attractions_rates, attraction_name):
+        print('running ' + attraction_name)
+        self.run_stored_procedure("pytheas.add_profile_attraction_prediction",
+                                  [int(profile_id), int(city_id), attraction_name,
+                                   float(attractions_rates[attraction_name])])
+
+    def migrate_city_predictions(self, city_id):
+        self.run_stored_procedure("pytheas.migrate_profiles_attractions_predictions", [city_id])
+
+    # overriding abstract method
+    def load_users_attractions_tags(self, city_id):
+        profiles_ratings_db = []
+        profiles_tags_db = []
+
+        profiles_ratings = {}
+        profiles_tags = {}
+
+        attractions = []
         df_users_tags = []
         df_users_ratings = []
-        attractions_list = []
 
-        users = []
-        users_tags = {}
-        users_ratings = {}
-
-        att_results = self.run_stored_procedure("pytheas.get_attractions_by_city", [city_name])
+        att_results = self.run_stored_procedure("pytheas.get_attractions_by_city", [city_id])
         for result in att_results:
             attractions_list_result = result.fetchall()
             for att in attractions_list_result:
-                attractions_list.append(att[0])
+                attractions.append(att[0])
 
-        users_results = self.run_stored_procedure("pytheas.get_users_by_city", [city_name])
-        for result in users_results:
-            users = result.fetchall()
-            for row in users:
-                # get user tags
-                user_tags = {}
-                user_tags_results = self.run_stored_procedure("pytheas.get_user_tags", [row[0]])
-                for result in user_tags_results:
-                    fetched_results = result.fetchall()
-                    for user_tag in fetched_results:
-                        user_tags[user_tag[1]] = 1
-                users_tags[row[1]] = user_tags
+        profiles_ratings_db_results = self.run_stored_procedure("pytheas.get_all_profiles_ratings", [city_id])
+        for result in profiles_ratings_db_results:
+            profiles_ratings_db = result.fetchall()
 
-                # get user rates
-                attractions = []
-                user_ratings_results = self.run_stored_procedure("pytheas.get_user_ratings", [row[0]])
-                for result in user_ratings_results:
-                    fetched_results = result.fetchall()
-                    for user_rating in fetched_results:
-                        attractions.append([user_rating[1], user_rating[2]])
-                users_ratings[row[1]] = attractions
+        profiles_tags_db_results = self.run_stored_procedure("pytheas.get_all_profiles_tags_by_city", [city_id])
+        for result in profiles_tags_db_results:
+            profiles_tags_db = result.fetchall()
 
-        df_users_ratings = pn.DataFrame.from_dict(users_ratings, orient='index')
+        # print(profiles_ratings_db[0])
+        for row in profiles_ratings_db:
+            # print (row)
+            profile_id = row[0]
+            # attraction_id = row[1]
+            attraction_name = row[2]
+            rate = row[3]
+
+            profile_attractions = []
+            if profile_id in profiles_ratings.keys():  profile_attractions = profiles_ratings[profile_id]
+
+            if (profile_attractions is None): profile_attractions = []
+            profile_attractions.append([attraction_name, rate])
+            profiles_ratings[profile_id] = profile_attractions
+
+        for row in profiles_tags_db:
+            profile_id = row[0]
+            tag_id = row[1]
+            # tag_value = row[2]
+
+            profile_tags = {}
+            if profile_id in profiles_tags.keys():  profile_tags = profiles_tags[profile_id]
+
+            profile_tags[tag_id] = 1
+            profiles_tags[profile_id] = profile_tags
+
+        df_users_ratings = pn.DataFrame.from_dict(profiles_ratings, orient='index')
         df_users_ratings.sort_index(inplace=True)
         df_users_ratings.insert(0, '_ID', range(0, 0 + len(df_users_ratings)))
 
-        df_users_tags = pn.DataFrame.from_dict(users_tags, orient='index')
+        df_users_tags = pn.DataFrame.from_dict(profiles_tags, orient='index')
         df_users_tags.sort_index(inplace=True)
-        return df_users_tags, df_users_ratings, attractions_list;
+        return df_users_tags, df_users_ratings, attractions;
 
     def get_profile_rate_for_city(self, profile_id, city_id):
         return_value = 0
@@ -86,17 +126,25 @@ class DataManagerSQL(DataManageBase):
             return_value = result.fetchall()
         return float(return_value[0][0]);
 
-    def get_all_cities(self):
+    def get_profile_city_recommendations(self, profile_id, city_id):
+        profile_vector = []
+        predictions_list = []
+        db_results = self.run_stored_procedure("pytheas.get_profile_attractions_prediction", [profile_id, city_id])
+        for result in db_results:
+            predictions_list = result.fetchall()
+        # print(predictions_list)
+        for attraction_id, rate in predictions_list:
+            attraction_rate = {'attraction_id': attraction_id, 'rate': rate}
+            profile_vector.append(attraction_rate)
+        return profile_vector
+
+    def get_profile_cities_rate(self, profile_id):
         cities_list = []
+        cities_ratings = {}
         db_results = self.run_stored_procedure("pytheas.get_all_cities", [])
         for result in db_results:
             cities_list = result.fetchall()
-        return cities_list
 
-    def get_profile_cities_rate(self, profile_id):
-        cities_ratings = {}
-
-        cities_list = self.get_all_cities();
         for city_id, city_name in cities_list:
             cities_ratings[city_id] = self.get_profile_rate_for_city(profile_id, city_id)
         return sorted(cities_ratings.items(), key=operator.itemgetter(1), reverse=True)
@@ -106,14 +154,14 @@ class DataManagerSQL(DataManageBase):
         self.cursor.execute(query)
         self.db_client.commit()
 
-    def run_stored_procedure(self, procedur_name, args):
-        print(procedur_name)
+    def run_stored_procedure(self, procedure_name, args):
+        print(procedure_name)
         print(args)
-        self.cursor.callproc(procedur_name, args)
+        self.cursor.callproc(procedure_name, args)
         self.db_client.commit()
         return self.cursor.stored_results()
 
-# _db = DataManagerSQL();
-# response1, response2, response3 = _db.load_data_from_DB('paris');
+#_db = DataManagerSQL();
+#response1, response2, response3 = _db.load_users_attractions_tags(11);
 # resi1 =  _db.insert_internal_user('fsgdsfdg')
 # print(resi1)
