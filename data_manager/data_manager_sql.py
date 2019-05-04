@@ -1,12 +1,13 @@
-import mysql.connector
-import pandas as pn
 import operator
 
+import mysql.connector
+import pandas as pn
+
 import config
-from data_manager_base import DataManageBase
+from data_manager.data_manager_base import DataManagerBase
 
 
-class DataManagerSQL(DataManageBase):
+class DataManagerSQL(DataManagerBase):
 
     def __init__(self):
 
@@ -32,14 +33,14 @@ class DataManagerSQL(DataManageBase):
         user_name = user_name + '_agent_user'
         self.run_stored_procedure("pytheas.add_internal_user_attraction", [user_name, attraction_name, rate])
 
-
     def insert_profile_prediction(self, profile_id, city_id, attractions_rates):
         global rates_attractions
         rates_attractions = {}
         for attraction_name in attractions_rates:
             rate = attractions_rates[attraction_name]
             rate_attractions = ''
-            if rate in rates_attractions.keys():  rate_attractions = rates_attractions[rate]
+            if rate in rates_attractions.keys():
+                rate_attractions = rates_attractions[rate]
             rate_attractions += "'" + attraction_name.replace("'", "''") + "',"
             rates_attractions[rate] = rate_attractions
 
@@ -85,18 +86,18 @@ class DataManagerSQL(DataManageBase):
         for result in profiles_tags_db_results:
             profiles_tags_db = result.fetchall()
 
-        # print(profiles_ratings_db[0])
         for row in profiles_ratings_db:
-            # print (row)
             profile_id = row[0]
             # attraction_id = row[1]
             attraction_name = row[2]
             rate = row[3]
 
             profile_attractions = []
-            if profile_id in profiles_ratings.keys():  profile_attractions = profiles_ratings[profile_id]
+            if profile_id in profiles_ratings.keys():
+                profile_attractions = profiles_ratings[profile_id]
 
-            if (profile_attractions is None): profile_attractions = []
+            if profile_attractions is None:
+                profile_attractions = []
             profile_attractions.append([attraction_name, rate])
             profiles_ratings[profile_id] = profile_attractions
 
@@ -106,7 +107,8 @@ class DataManagerSQL(DataManageBase):
             # tag_value = row[2]
 
             profile_tags = {}
-            if profile_id in profiles_tags.keys():  profile_tags = profiles_tags[profile_id]
+            if profile_id in profiles_tags.keys():
+                profile_tags = profiles_tags[profile_id]
 
             profile_tags[tag_id] = 1
             profiles_tags[profile_id] = profile_tags
@@ -117,14 +119,14 @@ class DataManagerSQL(DataManageBase):
 
         df_users_tags = pn.DataFrame.from_dict(profiles_tags, orient='index')
         df_users_tags.sort_index(inplace=True)
-        return df_users_tags, df_users_ratings, attractions;
+        return df_users_tags, df_users_ratings, attractions
 
     def get_profile_rate_for_city(self, profile_id, city_id):
         return_value = 0
         db_results = self.run_stored_procedure("pytheas.get_profile_rate_for_city", [profile_id, city_id])
         for result in db_results:
             return_value = result.fetchall()
-        return float(return_value[0][0]);
+        return float(return_value[0][0])
 
     def get_profile_city_recommendations(self, profile_id, city_id):
         profile_vector = []
@@ -132,7 +134,6 @@ class DataManagerSQL(DataManageBase):
         db_results = self.run_stored_procedure("pytheas.get_profile_attractions_prediction", [profile_id, city_id])
         for result in db_results:
             predictions_list = result.fetchall()
-        # print(predictions_list)
         for attraction_id, rate in predictions_list:
             attraction_rate = {'attraction_id': attraction_id, 'rate': rate}
             profile_vector.append(attraction_rate)
@@ -160,8 +161,3 @@ class DataManagerSQL(DataManageBase):
         self.cursor.callproc(procedure_name, args)
         self.db_client.commit()
         return self.cursor.stored_results()
-
-#_db = DataManagerSQL();
-#response1, response2, response3 = _db.load_users_attractions_tags(11);
-# resi1 =  _db.insert_internal_user('fsgdsfdg')
-# print(resi1)
