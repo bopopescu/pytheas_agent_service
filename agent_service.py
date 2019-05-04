@@ -27,7 +27,7 @@ class AgentService:
             city_ids.append(city_id)
 
         for id in city_ids:
-            attractions_vector = self.predict_attractions_for_profile_city(profile_id, city_ids[i])
+            attractions_vector = self.predict_attractions_for_profile_city(profile_id, id)
             predictions_result.append({'city_id': city_id, 'attractions': attractions_vector})
         return predictions_result;
 
