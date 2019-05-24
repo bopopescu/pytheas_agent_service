@@ -72,11 +72,11 @@ class Service:
         return self.date_importer_sql.get_profile_cities_rate(profile_id)
 
     def import_initial_attractions_for_city(self, city_name):
+        df_users_tags, df_users_ratings, attractions_list = self.date_importer.load_data_from_service(city_name)
         df_users_tags[np.isnan(df_users_tags)] = 0
-        m_predicted = self.calculate_matrix(df_users_tags, df_users_ratings, attractions_list)
-
         self.store_internal_datasets_to_db(df_users_tags, df_users_ratings)
 
+    def calculate_matrix_knn(self, df_users_tags, df_users_ratings, attractions_list):
         start_time = datetime.now()
 
         df_users_tags_calced = self.bl.calculate_user_tags_matrix(df_users_tags)
