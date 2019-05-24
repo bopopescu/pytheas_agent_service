@@ -30,25 +30,32 @@ class Service:
             city_ids.append(city_id)
 
         for id in city_ids:
-            attractions_vector = self.predict_attractions_for_profile_city(profile_id, id)
+            attractions_vector = self.predict_attractions_for_profile_city(profile_id, id, False)
             predictions_result.append({'city_id': city_id, 'attractions': attractions_vector})
         return predictions_result
 
-    def predict_attractions_for_profile_city(self, profile_id, city_id):
-        profile_city_vector = []
-
-        profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
+    def predict_attractions_for_profile_city(self, profile_id, city_id, is_knn=True):
+        #profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
+        profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
-            self.predict_attractions_for_city(city_id)
-            profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
+            profiles_prediction_response = self.predict_attractions_for_city(city_id, is_knn)
+            profile_city_vector = profiles_prediction_response[profile_id]
         return profile_city_vector
 
-    def predict_attractions_for_city(self, city_id):
-        df_profile_tags, df_profile_ratings, attractions_list = self.date_importer_sql.load_users_attractions_tags(
-            city_id)
+    def predict_attractions_for_city(self, city_id, is_knn=True):
+        global df_profile_ratings
+
+        df_attractions_tags = self.date_importer_sql.load_attractions_tags_for_city(city_id)
+        df_profile_tags, df_profile_ratings, attractions_list = self.date_importer_sql.load_users_attractions_tags(city_id)
         df_profile_tags[np.isnan(df_profile_tags)] = 0
         profiles_vector = list(df_profile_ratings.index.values)
-        m_predicted = self.calculate_matrix(df_profile_tags, df_profile_ratings, attractions_list)
+
+        m_predicted = {}
+        if is_knn:
+            m_predicted = self.calculate_matrix_knn(df_profile_tags, df_profile_ratings, attractions_list)
+        else:
+            m_predicted = self.calculate_matrix_mf(df_profile_tags, df_profile_ratings,
+                                                   df_attractions_tags, attractions_list)
 
         profiles_prediction_response = {}
         for i in range(0, len(profiles_vector)):
@@ -57,22 +64,19 @@ class Service:
                 attractions_rates[attractions_list[j]] = float(format(m_predicted[i][j], '.2f'))
             profiles_prediction_response[profiles_vector[i]] = attractions_rates
 
-        #self.store_predictions_to_db(city_id, profiles_prediction_response)
+        #Async Store to DB
+        # self.store_predictions_to_db(city_id, profiles_prediction_response)
         return profiles_prediction_response
 
     def predict_profile_cities_rate(self, profile_id):
         return self.date_importer_sql.get_profile_cities_rate(profile_id)
 
-    def predict_initial_attractions_for_city(self, city_name):
-        df_users_tags, df_users_ratings, attractions_list = self.date_importer_mongo.load_users_attractions_tags(
-            city_name)
+    def import_initial_attractions_for_city(self, city_name):
         df_users_tags[np.isnan(df_users_tags)] = 0
         m_predicted = self.calculate_matrix(df_users_tags, df_users_ratings, attractions_list)
 
         self.store_internal_datasets_to_db(df_users_tags, df_users_ratings)
-        return m_predicted
 
-    def calculate_matrix(self, df_users_tags, df_users_ratings, attractions_list):
         start_time = datetime.now()
 
         df_users_tags_calced = self.bl.calculate_user_tags_matrix(df_users_tags)
@@ -80,10 +84,36 @@ class Service:
         df_users_ratings_calced_centered, mean_point = self.bl.center_matrix(df_users_ratings_calced)
 
         m_similarity = pairwise_distances(df_users_tags_calced, metric='cosine')
-        m_predicted = self.bl.predict(df_users_ratings_calced_centered, m_similarity, mean_point, type='user')
+        m_predicted = self.bl.predict_knn(df_users_ratings_calced_centered, m_similarity, mean_point, type='user')
 
         end_time = datetime.now()
+
         self.bl.calculate_error_rate(df_users_ratings_calced, m_predicted)
+        total_time = end_time - start_time
+        print('Total Calc Time: {:4.2f}'.format(total_time.total_seconds()))
+
+        return m_predicted
+
+    def calculate_matrix_mf(self, df_users_tags, df_users_ratings, df_attractions_tags, attractions_list):
+        start_time = datetime.now()
+
+        user_tag_matrix = np.array(df_users_tags)
+        tag_attraction_matrix = np.array(df_attractions_tags)
+        rating_matrix, sparsity = self.bl.calculate_user_ratings_matrix(df_users_ratings, attractions_list)
+
+        r = rating_matrix
+        p = user_tag_matrix
+        q = tag_attraction_matrix
+        k = len(tag_attraction_matrix)
+
+        m_np, m_nq = self.bl.matrix_factorization(r, p, q, k)
+        m_predicted = np.dot(m_np, m_nq.T)
+
+        end_time = datetime.now()
+
+        m_predicted = self.bl.round_matrix(m_predicted)
+        self.bl.calculate_error_rate(rating_matrix, m_predicted)
+
         total_time = end_time - start_time
         print('Total Calc Time: {:4.2f}'.format(total_time.total_seconds()))
 
@@ -108,11 +138,11 @@ class Service:
             self.date_importer_sql.insert_profile_prediction(profile_id, city_id, profiles_prediction[profile_id])
         self.date_importer_sql.migrate_city_predictions(city_id)
 
-'''
+
 if __name__ == '__main__':
     agent_service = Service();
     resX = agent_service.predict_trip_for_profile(22,11)
     #resX = agent_service.predict_profile_cities_rate(22)
     #resX= agent_service.predict_attractions_for_city(11)
     print(resX)
-'''
+

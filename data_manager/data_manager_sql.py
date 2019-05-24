@@ -2,6 +2,7 @@ import operator
 
 import mysql.connector
 import pandas as pn
+import numpy as np
 
 import config
 from data_manager.data_manager_base import DataManagerBase
@@ -120,6 +121,30 @@ class DataManagerSQL(DataManagerBase):
         df_users_tags = pn.DataFrame.from_dict(profiles_tags, orient='index')
         df_users_tags.sort_index(inplace=True)
         return df_users_tags, df_users_ratings, attractions
+
+    def load_attractions_tags_for_city(self, city_id):
+        tags_attractions = {}
+        att_results = self.run_stored_procedure("pytheas.get_attractions_tags_by_city", [city_id])
+        for result in att_results:
+            attractions_list_result = result.fetchall()
+            for att in attractions_list_result:
+                attraction_id = att[0]
+                tag_id = att[1]
+                avg_rate = att[2]
+
+                att_tags = tags_attractions.get(tag_id)
+                if att_tags is None:
+                    att_tags = {}
+                if attraction_id not in att_tags:
+                    att_tags[attraction_id] = 0
+                att_tags[attraction_id] = avg_rate
+                tags_attractions[tag_id] = att_tags
+
+        df_attractions_tags = pn.DataFrame.from_dict(tags_attractions, orient='index')
+        df_attractions_tags = df_attractions_tags.reindex(sorted(df_attractions_tags.columns), axis=1)
+        df_attractions_tags.sort_index(inplace=True)
+        df_attractions_tags[np.isnan(df_attractions_tags)] = 0
+        return df_attractions_tags
 
     def get_profile_rate_for_city(self, profile_id, city_id):
         return_value = 0

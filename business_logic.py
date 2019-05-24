@@ -2,6 +2,65 @@ import numpy as np
 
 
 class BusinessLogic:
+
+    @staticmethod
+    def predict_knn(original_matrix, similarity, mean_point, type='user'):
+
+        if type == 'user':
+            mean_user_rating = original_matrix.mean(axis=1)
+            ratings_diff = original_matrix
+            prediction = mean_user_rating[:, np.newaxis] + similarity.dot(ratings_diff) / np.array(
+                [np.abs(similarity).sum(axis=1)]).T
+        elif type == 'item':
+            prediction = original_matrix.dot(similarity) / np.array([np.abs(similarity).sum(axis=1)])
+        for row in range(len(prediction)):
+            for cell in range(len(prediction[0])):
+                prediction[row][cell] += mean_point[row]
+
+        return prediction
+
+    @staticmethod
+    def predict_mf(original_matrix, similarity, mean_point, type='user'):
+
+        if type == 'user':
+            mean_user_rating = original_matrix.mean(axis=1)
+            ratings_diff = original_matrix;
+            prediction = mean_user_rating[:, np.newaxis] + similarity.dot(ratings_diff) / np.array(
+                [np.abs(similarity).sum(axis=1)]).T
+        elif type == 'item':
+            prediction = original_matrix.dot(similarity) / np.array([np.abs(similarity).sum(axis=1)])
+
+        for row in range(len(prediction)):
+            for cell in range(len(prediction[0])):
+                prediction[row][cell] += mean_point[row]
+
+        return prediction
+
+    @staticmethod
+    def calculate_error_rate(original_matrix, prediction_matrix):
+        count_elements = 0
+        sum_error_gap = 0
+        count_success = 0
+        cost = 0
+        error_rate = 0
+        for i in range(len(original_matrix)):
+            for j in range(len(original_matrix[0])):
+                cell = original_matrix[i][j]
+                predict_cell = round(prediction_matrix[i][j])
+
+                if cell != 0:
+                    count_elements += 1
+                    if cell - predict_cell >= 0:
+                        sum_error_gap += cell - predict_cell
+                    else:
+                        sum_error_gap -= cell - predict_cell
+
+                    if cell == predict_cell:
+                        count_success += 1
+        cost = sum_error_gap * sum_error_gap
+        error_rate = cost / count_elements
+        return cost, error_rate
+
     @staticmethod
     def calculate_user_tags_matrix(data_set):
         n_users = len(data_set)
@@ -59,9 +118,10 @@ class BusinessLogic:
                 if matrix[row][cell] != 0:
                     row_count = row_count + 1
                     row_sum = row_sum + matrix[row][cell]
-            if row_count != 0: row_avg = row_sum / row_count
+            if row_count != 0:
+                row_avg = row_sum / row_count
             mean_point.append(row_avg)
-        centered_matrix = matrix.copy()  # - meanPoint
+        centered_matrix = matrix.copy()
 
         for row in range(len(mean_point)):
             for cell in range(len(centered_matrix[0])):
@@ -81,45 +141,29 @@ class BusinessLogic:
         return sim / (norms / norms.T)
 
     @staticmethod
-    def predict(original_matrix, similarity, meanPoint, type='user'):
-
-        if type == 'user':
-            mean_user_rating = original_matrix.mean(axis=1)
-            ratings_diff = original_matrix
-            prediction = mean_user_rating[:, np.newaxis] + similarity.dot(ratings_diff) / np.array(
-                [np.abs(similarity).sum(axis=1)]).T
-        elif type == 'item':
-            prediction = original_matrix.dot(similarity) / np.array([np.abs(similarity).sum(axis=1)])
-        for row in range(len(prediction)):
-            for cell in range(len(prediction[0])):
-                prediction[row][cell] += meanPoint[row]
-
-        return prediction
+    def matrix_factorization(r, p, q, k, steps=6, alpha=0.007, beta=0.5):
+        for step in range(steps):
+            for i in range(len(r)):
+                for j in range(len(r[i])):
+                    if r[i][j] > 0:
+                        eij = r[i][j] - np.dot(p[i, :], q[:, j])
+                        for x in range(k):
+                            p[i][x] = p[i][x] + alpha * (2 * eij * q[x][j] - beta * p[i][x])
+                            q[x][j] = q[x][j] + alpha * (2 * eij * p[i][x] - beta * q[x][j])
+        return p, q.T
 
     @staticmethod
-    def calculate_error_rate(original_matrix, prediction_matrix):
-        count_elements = 0
-        sum_error_gap = 0
-        count_success = 0
-        cost = 0
-        error_rate = 0
-        for i in range(len(original_matrix)):
-            for j in range(len(original_matrix[0])):
-                cell = original_matrix[i][j]
-                predict_cell = round(prediction_matrix[i][j])
+    def round_matrix(matrix):
+        result_matrix = matrix.copy()
+        for row in range(len(matrix)):
+            for cell in range(len(matrix[0])):
+                result_matrix[row][cell] = round(result_matrix[row][cell])
+                if result_matrix[row][cell] > 5:
+                    result_matrix[row][cell] = 5
+                if result_matrix[row][cell] < 0:
+                    result_matrix[row][cell] = 1
+        return result_matrix
 
-                if cell != 0:
-                    count_elements += 1
-                    if cell - predict_cell >= 0:
-                        sum_error_gap += cell - predict_cell
-                    else:
-                        sum_error_gap -= cell - predict_cell
-
-                    if cell == predict_cell:
-                        count_success += 1
-        cost = sum_error_gap * sum_error_gap
-        error_rate = cost / count_elements
-        return cost, error_rate
 
 
 
