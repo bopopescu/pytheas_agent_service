@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="95a22184-771e-40ca-89cf-1fb365d102d1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/service.py" afterDir="false" />
-    </list>
+    <list default="true" id="95a22184-771e-40ca-89cf-1fb365d102d1" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,7 +148,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="240" />
     <option name="y" value="126" />
     <option name="width" value="1440" />
@@ -275,10 +273,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1295" height="695" extended-state="7" />
-    <editor active="true" />
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49932158" visible="true" weight="0.16521049" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49932158" visible="true" weight="0.16521049" />
       <window_info id="Structure" order="1" sideWeight="0.5006784" side_tool="true" weight="0.1654373" />
       <window_info id="Favorites" order="2" sideWeight="0.5006784" side_tool="true" weight="0.1654373" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -289,7 +286,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32936078" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3280142" />
-      <window_info anchor="bottom" id="Terminal" order="8" visible="true" weight="0.30141845" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.30141845" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50052685" side_tool="true" weight="0.20151679" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.13120568" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
