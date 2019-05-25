@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="95a22184-771e-40ca-89cf-1fb365d102d1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/flask_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/flask_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/service.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -52,8 +51,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
+            <state relative-caret-position="180">
+              <caret line="40" column="34" lean-forward="true" selection-start-line="40" selection-start-column="34" selection-end-line="40" selection-end-column="34" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -151,7 +150,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="240" />
     <option name="y" value="126" />
     <option name="width" value="1440" />
@@ -276,7 +275,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49932158" visible="true" weight="0.16521049" />
@@ -364,8 +363,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
+        <state relative-caret-position="180">
+          <caret line="40" column="34" lean-forward="true" selection-start-line="40" selection-start-column="34" selection-end-line="40" selection-end-column="34" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
