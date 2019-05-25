@@ -1,8 +1,7 @@
 from datetime import datetime
-
+from threading import Thread
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
-
 from business_logic import BusinessLogic
 from data_manager.data_manager_mongo_db import DataManagerMongoDB
 from data_manager.data_manager_sql import DataManagerSQL
@@ -35,8 +34,8 @@ class Service:
         return predictions_result
 
     def predict_attractions_for_profile_city(self, profile_id, city_id, is_knn=True):
-        #profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
-        profile_city_vector = None
+        profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
+        #profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
             profiles_prediction_response = self.predict_attractions_for_city(city_id, is_knn)
             profile_city_vector = profiles_prediction_response[profile_id]
@@ -65,7 +64,7 @@ class Service:
             profiles_prediction_response[profiles_vector[i]] = attractions_rates
 
         #Async Store to DB
-        # self.store_predictions_to_db(city_id, profiles_prediction_response)
+        Thread(target=self.store_predictions_to_db, args=(city_id, profiles_prediction_response,)).start()
         return profiles_prediction_response
 
     def predict_profile_cities_rate(self, profile_id):
@@ -138,11 +137,11 @@ class Service:
             self.date_importer_sql.insert_profile_prediction(profile_id, city_id, profiles_prediction[profile_id])
         self.date_importer_sql.migrate_city_predictions(city_id)
 
-
+'''
 if __name__ == '__main__':
     agent_service = Service();
     resX = agent_service.predict_trip_for_profile(22,11)
     #resX = agent_service.predict_profile_cities_rate(22)
     #resX= agent_service.predict_attractions_for_city(11)
     print(resX)
-
+'''

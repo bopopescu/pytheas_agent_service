@@ -16,3 +16,6 @@ def get_attractions_for_profile():
     agent_service = Service()
     result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
     return jsonify({'Results': result_vector})
+
+if __name__ == '__main__':
+    app.run()
