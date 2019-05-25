@@ -164,6 +164,21 @@ class BusinessLogic:
                     result_matrix[row][cell] = 1
         return result_matrix
 
+    @staticmethod
+    def union_prediction_matrixes(first_matrix, second_matrix):
+        n_rows = len(first_matrix)
+        n_columns = len(first_matrix[0])
+        if len(first_matrix) > len(second_matrix):
+            n_rows = len(second_matrix)
+        if len(first_matrix[0]) > len(second_matrix[0]):
+            n_columns = len(second_matrix[0])
+
+        for i in range(n_rows):
+            for j in range(n_columns):
+                if round(first_matrix[i][j]) == 0 and round(second_matrix[i][j]) != 0:
+                    first_matrix[i][j] = round(second_matrix[i][j])
+        return first_matrix
+
 
 
 

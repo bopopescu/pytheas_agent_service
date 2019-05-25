@@ -29,18 +29,19 @@ class Service:
             city_ids.append(city_id)
 
         for id in city_ids:
-            attractions_vector = self.predict_attractions_for_profile_city(profile_id, id, False)
+            attractions_vector = self.predict_attractions_for_profile_city(profile_id, id)
             predictions_result.append({'city_id': city_id, 'attractions': attractions_vector})
         return predictions_result
 
-    def predict_attractions_for_profile_city(self, profile_id, city_id, is_knn=True):
-        profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
+    def predict_attractions_for_profile_city(self, profile_id, city_id):
+        #profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
+        profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
-            profiles_prediction_response = self.predict_attractions_for_city(city_id, is_knn)
+            profiles_prediction_response = self.predict_attractions_for_city(city_id)
             profile_city_vector = profiles_prediction_response[profile_id]
         return profile_city_vector
 
-    def predict_attractions_for_city(self, city_id, is_knn=True):
+    def predict_attractions_for_city(self, city_id):
         global df_profile_ratings
 
         df_attractions_tags = self.date_importer_sql.load_attractions_tags_for_city(city_id)
@@ -48,12 +49,11 @@ class Service:
         df_profile_tags[np.isnan(df_profile_tags)] = 0
         profiles_vector = list(df_profile_ratings.index.values)
 
-        m_predicted = {}
-        if is_knn:
-            m_predicted = self.calculate_matrix_knn(df_profile_tags, df_profile_ratings, attractions_list)
-        else:
-            m_predicted = self.calculate_matrix_mf(df_profile_tags, df_profile_ratings,
-                                                   df_attractions_tags, attractions_list)
+        m_predicted = self.calculate_matrix_mf(df_profile_tags, df_profile_ratings, df_attractions_tags,
+                                               attractions_list)
+        m_predicted_knn = self.calculate_matrix_knn(df_profile_tags, df_profile_ratings, attractions_list)
+
+        m_predicted = self.bl.union_prediction_matrixes(m_predicted, m_predicted_knn)
 
         profiles_prediction_response = {}
         for i in range(0, len(profiles_vector)):
@@ -103,6 +103,11 @@ class Service:
         p = user_tag_matrix
         q = tag_attraction_matrix
         k = len(tag_attraction_matrix)
+        print('----------')
+        print(len(r[0]))
+        print(len(p[0]))
+        print(len(q))
+        print('----------')
 
         m_np, m_nq = self.bl.matrix_factorization(r, p, q, k)
         m_predicted = np.dot(m_np, m_nq.T)
@@ -136,6 +141,11 @@ class Service:
             self.date_importer_sql.insert_profile_prediction(profile_id, city_id, profiles_prediction[profile_id])
         self.date_importer_sql.migrate_city_predictions(city_id)
 
+    def import_all_cities(self):
+        cities = self.data_import_sql.get_cities()
+        for city_id, city_name in cities:
+            if city_id not in (11, 7):  # london & paris already run
+                self.import_initial_attractionsfor_city(city_name)
 '''
 if __name__ == '__main__':
     agent_service = Service();

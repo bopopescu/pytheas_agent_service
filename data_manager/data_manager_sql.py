@@ -165,15 +165,20 @@ class DataManagerSQL(DataManagerBase):
         return profile_vector
 
     def get_profile_cities_rate(self, profile_id):
-        cities_list = []
         cities_ratings = {}
-        db_results = self.run_stored_procedure("pytheas.get_all_cities", [])
-        for result in db_results:
-            cities_list = result.fetchall()
+        cities_list = self.get_cities()
 
         for city_id, city_name in cities_list:
             cities_ratings[city_id] = self.get_profile_rate_for_city(profile_id, city_id)
         return sorted(cities_ratings.items(), key=operator.itemgetter(1), reverse=True)
+
+    def get_cities(self):
+        cities_list = []
+        db_results = self.run_stored_procedure("pytheas.get_all_cities", [])
+        for result in db_results:
+            cities_list = result.fetchall()
+
+        return cities_list
 
     def insert_to_db(self, query):
         print(query)
