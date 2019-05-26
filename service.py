@@ -63,7 +63,7 @@ class Service:
             profiles_prediction_response[profiles_vector[i]] = attractions_rates
 
         #Async Store to DB
-        Thread(target=self.store_predictions_to_db, args=(city_id, profiles_prediction_response,)).start()
+        #Thread(target=self.store_predictions_to_db, args=(city_id, profiles_prediction_response,)).start()
         return profiles_prediction_response
 
     def predict_profile_cities_rate(self, profile_id):
