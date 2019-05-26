@@ -4,7 +4,7 @@ import mysql.connector
 import pandas as pn
 import numpy as np
 
-import app.data_manager.config as config
+from app.data_manager.config import Config
 from app.data_manager.data_manager_base import DataManagerBase
 
 
@@ -13,10 +13,10 @@ class DataManagerSQL(DataManagerBase):
     def __init__(self):
 
         self.db_client = mysql.connector.connect(
-            host=config.HOST,
-            database=config.DATABASE_NAME,
-            user=config.USERNAME,
-            password=config.PASSWORD
+            host=Config.HOST,
+            database=Config.DATABASE_NAME,
+            user=Config.USERNAME,
+            password=Config.PASSWORD
         )
         self.cursor = self.db_client.cursor()
 
