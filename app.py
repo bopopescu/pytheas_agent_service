@@ -7,6 +7,10 @@ app = Flask(__name__)
 def index():
 	return 'OK!'
 
+@app.route('/a')
+def index1():
+    return jsonify({'Results': "hi"})
+
 '''
 @app.route('/api/get_attractions_for_profile', methods=['GET'])
 def get_attractions_for_profile():
