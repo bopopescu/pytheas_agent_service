@@ -7,7 +7,7 @@ app = Flask(__name__)
 def index():
 	return 'OK!'
 
-'''
+
 @app.route('/api/get_attractions_for_profile', methods=['GET'])
 def get_attractions_for_profile():
     #profile_id = int(request.args.get('ProfileId'))
@@ -15,8 +15,8 @@ def get_attractions_for_profile():
     #agent_service = Service()
     #result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
     #return jsonify({'Results': result_vector})
-	return jsonify({'Results': request.args.get('ProfileId')})
-'''
+	return jsonify({'Results': "hello"})
+
 
 if __name__ == '__main__':
 	app.run()
