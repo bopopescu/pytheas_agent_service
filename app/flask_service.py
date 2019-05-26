@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from app.service import Service
+#from app.service import Service
 
 app = Flask(__name__)
 
@@ -11,7 +11,7 @@ def index():
 
 @app.route('/aa')
 def index1():
-	agent_service = Service()
+	#agent_service = Service()
 	return 'OK1111!'
 
 
