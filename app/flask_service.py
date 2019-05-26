@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from app.service import Service
-#from app.business_logic import  BusinessLogic
 app = Flask(__name__)
 
 
@@ -17,7 +16,7 @@ def index1():
 
 
 '''
-@app.route('/a')
+@app.route('/api/get_attractions_for_profile', methods=['GET'])
 def get_attractions_for_profile():
     profile_id = int(request.args.get('ProfileId'))
     city_id = int(request.args.get('CityId')) if request.args.get('CityId') is not None else None

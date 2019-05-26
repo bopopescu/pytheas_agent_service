@@ -4,7 +4,7 @@ import pandas as pn
 from bson import json_util
 from pymongo import MongoClient
 
-import config
+from app.data_manager import config
 from app.data_manager.data_manager_base import DataManagerBase
 
 

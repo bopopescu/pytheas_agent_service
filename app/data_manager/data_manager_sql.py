@@ -4,7 +4,7 @@ import mysql.connector
 import pandas as pn
 import numpy as np
 
-import config
+from app.data_manager import config
 from app.data_manager.data_manager_base import DataManagerBase
 
 
