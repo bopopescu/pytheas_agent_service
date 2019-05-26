@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from app.service import Service
+#from app.service import Service
 app = Flask(__name__)
 
 
@@ -8,7 +8,7 @@ def index():
 	return 'OK!'
 
 
-@app.route('/api/get_attractions_for_profile', methods=['GET'])
+@app.route('/api/get_attractions_for_profile')
 def get_attractions_for_profile():
     #profile_id = int(request.args.get('ProfileId'))
     #city_id = int(request.args.get('CityId')) if request.args.get('CityId') is not None else None
