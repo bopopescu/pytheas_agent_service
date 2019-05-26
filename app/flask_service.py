@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
-from app.service import Service
-
+#from app.service import Service
+from app.business_logic import  BusinessLogic
 app = Flask(__name__)
 
 
@@ -11,6 +11,7 @@ def index():
 
 @app.route('/aa')
 def index1():
+	aaa = BusinessLogic()
 	#agent_service = Service()
 	return 'OK1111!'
 
