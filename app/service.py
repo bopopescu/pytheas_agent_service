@@ -1,9 +1,9 @@
 from datetime import datetime
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
-from .business_logic import BusinessLogic
-from data_manager.data_manager_mongo_db import DataManagerMongoDB
-from data_manager.data_manager_sql import DataManagerSQL
+from app.business_logic import BusinessLogic
+from app.data_manager.data_manager_mongo_db import DataManagerMongoDB
+from app.data_manager.data_manager_sql import DataManagerSQL
 
 
 class Service:

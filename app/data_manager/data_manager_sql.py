@@ -5,7 +5,7 @@ import pandas as pn
 import numpy as np
 
 import config
-from data_manager.data_manager_base import DataManagerBase
+from app.data_manager.data_manager_base import DataManagerBase
 
 
 class DataManagerSQL(DataManagerBase):
