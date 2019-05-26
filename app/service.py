@@ -1,8 +1,7 @@
 from datetime import datetime
-from threading import Thread
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
-from business_logic import BusinessLogic
+from app.business_logic import BusinessLogic
 from data_manager.data_manager_mongo_db import DataManagerMongoDB
 from data_manager.data_manager_sql import DataManagerSQL
 
