@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-#from app.service import Service
+from app.service import Service
 app = Flask(__name__)
 
 
@@ -7,11 +7,7 @@ app = Flask(__name__)
 def index():
 	return 'OK!'
 
-@app.route('/a')
-def index1():
-    return jsonify({'Results': "hi"})
 
-'''
 @app.route('/api/get_attractions_for_profile', methods=['GET'])
 def get_attractions_for_profile():
     profile_id = int(request.args.get('ProfileId'))
@@ -19,7 +15,6 @@ def get_attractions_for_profile():
     agent_service = Service()
     result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
     return jsonify({'Results': result_vector})
-'''
 
 
 if __name__ == '__main__':
