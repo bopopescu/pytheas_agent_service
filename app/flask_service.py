@@ -11,7 +11,7 @@ def index():
 
 @app.route('/aa')
 def index1():
-	#agent_service = Service()
+	agent_service = Service()
 	return 'OK1111!'
 
 
