@@ -1,22 +1,29 @@
 from flask import Flask, request, jsonify
 from app.service import Service
+
 app = Flask(__name__)
 
 
 @app.route('/')
 def index():
-	return 'OK!'
+	return 'OK!(:'
 
 
-@app.route('/api/get_attractions_for_profile')
+@app.route('/aa')
+def index1():
+	#agent_service = Service()
+	return 'OK1111!'
+
+
+'''
+@app.route('/a')
 def get_attractions_for_profile():
-    #profile_id = int(request.args.get('ProfileId'))
-    #city_id = int(request.args.get('CityId')) if request.args.get('CityId') is not None else None
+    profile_id = int(request.args.get('ProfileId'))
+    city_id = int(request.args.get('CityId')) if request.args.get('CityId') is not None else None
     agent_service = Service()
-    result_vector = agent_service.predict_trip_for_profile(22, 11)
+    result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
     return jsonify({'Results': result_vector})
-	#return jsonify({'Results': "hello"})
-
+'''
 
 if __name__ == '__main__':
-	app.run()
+    app.run()
