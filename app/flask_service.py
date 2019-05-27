@@ -9,20 +9,33 @@ def index():
     return 'OK!(:'
 
 
-@app.route('/aa')
-def index1():
-    aaa = Service()
-    # agent_service = Service()
-    return 'OK1111!'
-
-
 @app.route('/api/get_attractions_for_profile', methods=['GET'])
 def get_attractions_for_profile():
-    profile_id = int(request.args.get('ProfileId'))
-    city_id = int(request.args.get('CityId')) if request.args.get('CityId') is not None else None
-    agent_service = Service()
-    result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
-    return jsonify(result_vector)
+    try:
+        arg_profile_id = request.args.get('profile_id')
+        arg_city_id = request.args.get('city_id')
+
+        if arg_profile_id is None or not is_represent_integer(arg_profile_id):
+            return 'Profile Id is missing or invalid'
+        if arg_city_id is not None and not is_represent_integer(arg_city_id):
+            return 'City Id is invalid. If you don''t wish to provide a valid vale, you may ignore this argument'
+
+        profile_id = int(arg_profile_id)
+        city_id = int(arg_profile_id) if arg_profile_id is not None else None
+
+        agent_service = Service()
+        result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
+        return jsonify(result_vector)
+    except ValueError:
+        return ValueError
+
+
+def is_represent_integer(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
 
 
 if __name__ == '__main__':

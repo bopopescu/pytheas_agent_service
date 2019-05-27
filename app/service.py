@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from threading import Thread
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
 
@@ -35,11 +35,13 @@ class Service:
         return predictions_result
 
     def predict_attractions_for_profile_city(self, profile_id, city_id):
-        #profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
-        profile_city_vector = None
+        profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
+        #profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
             profiles_prediction_response = self.predict_attractions_for_city(city_id)
             profile_city_vector = profiles_prediction_response[profile_id]
+
+        profile_city_vector = self.bl.dictionary_sort_by_key(profile_city_vector)
         return profile_city_vector
 
     def predict_attractions_for_city(self, city_id):
@@ -60,11 +62,16 @@ class Service:
         for i in range(0, len(profiles_vector)):
             attractions_rates = {}
             for j in range(0, len(attractions_list)):
-                attractions_rates[attractions_list[j]] = float(format(m_predicted[i][j], '.2f'))
+                rate = float(format(m_predicted[i][j], '.1f'))
+                rate_attractions = []
+                if rate in attractions_rates:
+                    rate_attractions = attractions_rates[rate]
+                rate_attractions.append(attractions_list[j])
+                attractions_rates[rate] = rate_attractions
             profiles_prediction_response[profiles_vector[i]] = attractions_rates
 
         #Async Store to DB
-        #Thread(target=self.store_predictions_to_db, args=(city_id, profiles_prediction_response,)).start()
+        Thread(target=self.store_predictions_to_db, args=(city_id, profiles_prediction_response,)).start()
         return profiles_prediction_response
 
     def predict_profile_cities_rate(self, profile_id):
@@ -104,11 +111,6 @@ class Service:
         p = user_tag_matrix
         q = tag_attraction_matrix
         k = len(tag_attraction_matrix)
-        print('----------')
-        print(len(r[0]))
-        print(len(p[0]))
-        print(len(q))
-        print('----------')
 
         m_np, m_nq = self.bl.matrix_factorization(r, p, q, k)
         m_predicted = np.dot(m_np, m_nq.T)

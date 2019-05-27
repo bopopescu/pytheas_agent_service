@@ -34,23 +34,12 @@ class DataManagerSQL(DataManagerBase):
         user_name = user_name + '_agent_user'
         self.run_stored_procedure("pytheas.add_internal_user_attraction", [user_name, attraction_name, rate])
 
-    def insert_profile_prediction(self, profile_id, city_id, attractions_rates):
-        global rates_attractions
-        rates_attractions = {}
-        for attraction_name in attractions_rates:
-            rate = attractions_rates[attraction_name]
-            rate_attractions = ''
-            if rate in rates_attractions.keys():
-                rate_attractions = rates_attractions[rate]
-            rate_attractions += "'" + attraction_name.replace("'", "''") + "',"
-            rates_attractions[rate] = rate_attractions
-
-        for rate in rates_attractions:
-            attractions = rates_attractions[rate][:-1]
-            print(rate)
-            print(attractions)
+    def insert_profile_prediction(self, profile_id, city_id, rates_attractions):
+        delimiter = ','
+        for rate in rates_attractions.keys():
+            attractions = delimiter.join(str(x) for x in rates_attractions[rate])
             self.run_stored_procedure("pytheas.add_profile_attractions_prediction",
-                                      [int(profile_id), attractions, float(rate)])
+                                  [int(profile_id), attractions, float(rate)])
 
     def insert_profile_attraction_prediction(self, profile_id, city_id, attractions_rates, attraction_name):
         print('running ' + attraction_name)
@@ -151,14 +140,18 @@ class DataManagerSQL(DataManagerBase):
         return float(return_value[0][0])
 
     def get_profile_city_recommendations(self, profile_id, city_id):
-        profile_vector = []
+        profile_vector = {}
         predictions_list = []
         db_results = self.run_stored_procedure("pytheas.get_profile_attractions_prediction", [profile_id, city_id])
         for result in db_results:
             predictions_list = result.fetchall()
         for attraction_id, rate in predictions_list:
-            attraction_rate = {'attraction_id': attraction_id, 'rate': rate}
-            profile_vector.append(attraction_rate)
+            rate = round(rate)
+            rate_attractions = []
+            if rate in profile_vector:
+                rate_attractions = profile_vector[rate]
+            rate_attractions.append(attraction_id)
+            profile_vector[rate] = rate_attractions
         return profile_vector
 
     def get_profile_cities_rate(self, profile_id):

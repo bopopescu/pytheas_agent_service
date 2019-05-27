@@ -179,6 +179,10 @@ class BusinessLogic:
                     first_matrix[i][j] = round(second_matrix[i][j])
         return first_matrix
 
-
-
+    @staticmethod
+    def dictionary_sort_by_key(dictionary):
+        sorted_dictionary = {}
+        for key in sorted(dictionary.keys(), reverse=True):
+            sorted_dictionary[key] = dictionary[key]
+        return sorted_dictionary
 
