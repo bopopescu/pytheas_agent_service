@@ -73,12 +73,6 @@ class DataManagerSQL(DataManagerBase):
         df_users_tags = []
         df_users_ratings = []
 
-        att_results = self.run_stored_procedure("pytheas.get_attractions_by_city", [city_id])
-        for result in att_results:
-            attractions_list_result = result.fetchall()
-            for att in attractions_list_result:
-                attractions.append(att[0])
-
         profiles_ratings_db_results = self.run_stored_procedure("pytheas.get_all_profiles_ratings", [city_id])
         for result in profiles_ratings_db_results:
             profiles_ratings_db = result.fetchall()
@@ -89,9 +83,12 @@ class DataManagerSQL(DataManagerBase):
 
         for row in profiles_ratings_db:
             profile_id = row[0]
-            # attraction_id = row[1]
-            attraction_name = row[2]
+            attraction_id = row[1]
+            #attraction_name = row[2]
             rate = row[3]
+
+            if attraction_id not in attractions:
+                attractions.append(attraction_id)
 
             profile_attractions = []
             if profile_id in profiles_ratings.keys():
@@ -99,7 +96,7 @@ class DataManagerSQL(DataManagerBase):
 
             if profile_attractions is None:
                 profile_attractions = []
-            profile_attractions.append([attraction_name, rate])
+            profile_attractions.append([attraction_id, rate])
             profiles_ratings[profile_id] = profile_attractions
 
         for row in profiles_tags_db:
