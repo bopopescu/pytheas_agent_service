@@ -4,19 +4,20 @@ import mysql.connector
 import pandas as pn
 import numpy as np
 
-from app.data_manager import config
 from app.data_manager.data_manager_base import DataManagerBase
 
 
 class DataManagerSQL(DataManagerBase):
 
     def __init__(self):
+        super(DataManagerSQL, self).__init__()
 
+        print(self.config.DATABASE_NAME)
         self.db_client = mysql.connector.connect(
-            host=config.HOST,
-            database=config.DATABASE_NAME,
-            user=config.USERNAME,
-            password=config.PASSWORD
+            host=self.config.HOST,
+            database=self.config.DATABASE_NAME,
+            user=self.config.USERNAME,
+            password=self.config.PASSWORD
         )
         self.cursor = self.db_client.cursor()
 
@@ -181,3 +182,5 @@ class DataManagerSQL(DataManagerBase):
         self.cursor.callproc(procedure_name, args)
         self.db_client.commit()
         return self.cursor.stored_results()
+
+a = DataManagerSQL()

@@ -1,19 +1,20 @@
 import json
 
 import pandas as pn
+import os
 from bson import json_util
 from pymongo import MongoClient
 
-from app.data_manager import config
 from app.data_manager.data_manager_base import DataManagerBase
 
 
 class DataManagerMongoDB(DataManagerBase):
 
     def __init__(self):
+        super(DataManagerMongoDB, self).__init__()
 
         self.connect_timeout_ms = 30000
-        self.mongo_url = config.mongo_url
+        self.mongo_url = self.config.mongo_url
         self.client = MongoClient(self.mongo_url, connectTimeoutMS=self.connect_timeout_ms)
         self.db = self.client.get_database("pytheas")
         self.collection = self.db.comments_test  # Paris only, for now
