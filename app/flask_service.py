@@ -30,6 +30,16 @@ def get_attractions_for_profile():
         return ValueError
 
 
+@app.route('/api/get_tags', methods=['GET'])
+def get_top_attraction_tags():
+    try:
+        agent_service = Service()
+        tags = agent_service.get_top_attraction_tags()
+        return jsonify(tags)
+    except ValueError:
+        return ValueError
+
+
 def is_represent_integer(s):
     try:
         int(s)
@@ -39,4 +49,4 @@ def is_represent_integer(s):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=80)

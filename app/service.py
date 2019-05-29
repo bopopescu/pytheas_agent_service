@@ -13,7 +13,10 @@ class Service:
     def __init__(self):
         self.date_importer_mongo = DataManagerMongoDB()
         self.bl = BusinessLogic()
-        self.date_importer_sql = DataManagerSQL()
+        self.date_manager_sql = DataManagerSQL()
+
+    def get_top_attraction_tags(self):
+        return self.date_manager_sql.get_top_tags()
 
     def predict_trip_for_profile(self, profile_id, city_id):
         predictions_result = []
@@ -35,7 +38,7 @@ class Service:
         return predictions_result
 
     def predict_attractions_for_profile_city(self, profile_id, city_id):
-        profile_city_vector = self.date_importer_sql.get_profile_city_recommendations(profile_id, city_id)
+        profile_city_vector = self.date_manager_sql.get_profile_city_recommendations(profile_id, city_id)
         #profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
             profiles_prediction_response = self.predict_attractions_for_city(city_id)
@@ -47,8 +50,8 @@ class Service:
     def predict_attractions_for_city(self, city_id):
         global df_profile_ratings
 
-        df_attractions_tags = self.date_importer_sql.load_attractions_tags_for_city(city_id)
-        df_profile_tags, df_profile_ratings, attractions_list = self.date_importer_sql.load_users_attractions_tags(city_id)
+        df_attractions_tags = self.date_manager_sql.load_attractions_tags_for_city(city_id)
+        df_profile_tags, df_profile_ratings, attractions_list = self.date_manager_sql.load_users_attractions_tags(city_id)
         df_profile_tags[np.isnan(df_profile_tags)] = 0
         profiles_vector = list(df_profile_ratings.index.values)
 
@@ -75,7 +78,7 @@ class Service:
         return profiles_prediction_response
 
     def predict_profile_cities_rate(self, profile_id):
-        return self.date_importer_sql.get_profile_cities_rate(profile_id)
+        return self.date_manager_sql.get_profile_cities_rate(profile_id)
 
     def import_initial_attractions_for_city(self, city_name):
         df_users_tags, df_users_ratings, attractions_list = self.date_importer.load_data_from_service(city_name)
@@ -127,33 +130,33 @@ class Service:
 
     def store_internal_datasets_to_db(self, df_users_tags, df_users_ratings):
         for user_name, tags_row in df_users_tags.iterrows():
-            self.date_importer_sql.insert_internal_user(user_name)
+            self.date_manager_sql.insert_internal_user(user_name)
             for i in range(0, len(tags_row)):
                 if tags_row[i] > 0:
-                    self.date_importer_sql.insert_tag_for_internal_user(user_name, df_users_tags.columns[i])
+                    self.date_manager_sql.insert_tag_for_internal_user(user_name, df_users_tags.columns[i])
 
         for user_name, ratings_row in df_users_ratings.iterrows():
             for i in range(0, len(ratings_row)):
                 if ratings_row[i] is not None:
                     att_name = ratings_row[i][0]
                     att_rating = ratings_row[i][1]
-                    self.date_importer_sql.insert_ratings_for_internal_user(user_name, att_name, att_rating)
+                    self.date_manager_sql.insert_ratings_for_internal_user(user_name, att_name, att_rating)
 
     def store_predictions_to_db(self, city_id, profiles_prediction):
         for profile_id in profiles_prediction:
-            self.date_importer_sql.insert_profile_prediction(profile_id, city_id, profiles_prediction[profile_id])
-        self.date_importer_sql.migrate_city_predictions(city_id)
+            self.date_manager_sql.insert_profile_prediction(profile_id, city_id, profiles_prediction[profile_id])
+        self.date_manager_sql.migrate_city_predictions(city_id)
 
     def import_all_cities(self):
         cities = self.data_import_sql.get_cities()
         for city_id, city_name in cities:
             if city_id not in (11, 7):  # london & paris already run
                 self.import_initial_attractionsfor_city(city_name)
-'''
+
 if __name__ == '__main__':
     agent_service = Service();
-    resX = agent_service.predict_trip_for_profile(22,11)
+    resX = agent_service.get_top_attraction_tags()
     #resX = agent_service.predict_profile_cities_rate(22)
     #resX= agent_service.predict_attractions_for_city(11)
     print(resX)
-'''
+

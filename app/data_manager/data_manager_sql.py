@@ -171,6 +171,19 @@ class DataManagerSQL(DataManagerBase):
 
         return cities_list
 
+    def get_top_tags(self):
+        query = "SELECT pt.id, pt.name FROM (SELECT tag_id, count(tag_id) AS tag_count FROM pytheas.profile_tag ppt  GROUP BY tag_id) AS ppta LEFT JOIN pytheas.tag pt ON pt.id = ppta.tag_id ORDER BY tag_count DESC limit 15"
+        mycursor = self.run_query(query)
+        return mycursor
+
+
+    def get_tables(self):
+        res = []
+        query = "SELECT table_name FROM information_schema.tables WHERE table_schema ='pytheas'"
+        mycursor = self.run_query(query)
+        return mycursor
+
+
     def insert_to_db(self, query):
         print(query)
         self.cursor.execute(query)
@@ -183,4 +196,8 @@ class DataManagerSQL(DataManagerBase):
         self.db_client.commit()
         return self.cursor.stored_results()
 
-a = DataManagerSQL()
+    def run_query(self, query):
+        print(query)
+        self.cursor.execute(query)
+        myresult = self.cursor.fetchall()
+        return myresult
