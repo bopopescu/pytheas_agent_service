@@ -52,7 +52,7 @@ class DataManagerSQL(DataManagerBase):
         self.run_stored_procedure("pytheas.migrate_profiles_attractions_predictions", [city_id])
 
     # overriding abstract method
-    def load_users_attractions_tags(self, city_id):
+    def load_users_attractions_tags(self, city_id, profile_id=-1):
         profiles_ratings_db = []
         profiles_tags_db = []
 
@@ -67,12 +67,12 @@ class DataManagerSQL(DataManagerBase):
         for result in profiles_ratings_db_results:
             profiles_ratings_db = result.fetchall()
 
-        profiles_tags_db_results = self.run_stored_procedure("pytheas.get_all_profiles_tags_by_city", [city_id])
+        profiles_tags_db_results = self.run_stored_procedure("pytheas.get_all_profiles_tags_by_city", [city_id, profile_id])
         for result in profiles_tags_db_results:
             profiles_tags_db = result.fetchall()
 
         for row in profiles_ratings_db:
-            profile_id = row[0]
+            curr_profile_id = row[0]
             attraction_id = row[1]
             #attraction_name = row[2]
             rate = row[3]
@@ -81,32 +81,39 @@ class DataManagerSQL(DataManagerBase):
                 attractions.append(attraction_id)
 
             profile_attractions = []
-            if profile_id in profiles_ratings.keys():
-                profile_attractions = profiles_ratings[profile_id]
+            if curr_profile_id in profiles_ratings.keys():
+                profile_attractions = profiles_ratings[curr_profile_id]
 
             if profile_attractions is None:
                 profile_attractions = []
             profile_attractions.append([attraction_id, rate])
-            profiles_ratings[profile_id] = profile_attractions
+            profiles_ratings[curr_profile_id] = profile_attractions
+        if profile_id not in profiles_ratings:
+            profiles_ratings[profile_id] = []
 
         for row in profiles_tags_db:
-            profile_id = row[0]
+            curr_profile_id = row[0]
             tag_id = row[1]
             # tag_value = row[2]
 
             profile_tags = {}
-            if profile_id in profiles_tags.keys():
-                profile_tags = profiles_tags[profile_id]
+            if curr_profile_id in profiles_tags.keys():
+                profile_tags = profiles_tags[curr_profile_id]
 
             profile_tags[tag_id] = 1
-            profiles_tags[profile_id] = profile_tags
+            profiles_tags[curr_profile_id] = profile_tags
+        if profile_id not in profiles_tags:
+            profiles_tags[profile_id] = {}
 
         df_users_ratings = pn.DataFrame.from_dict(profiles_ratings, orient='index')
         df_users_ratings.sort_index(inplace=True)
         df_users_ratings.insert(0, '_ID', range(0, 0 + len(df_users_ratings)))
 
         df_users_tags = pn.DataFrame.from_dict(profiles_tags, orient='index')
+        if profile_id not in profiles_tags:
+            df_users_tags.loc[profile_id] = None
         df_users_tags.sort_index(inplace=True)
+
         return df_users_tags, df_users_ratings, attractions
 
     def load_attractions_tags_for_city(self, city_id):
@@ -172,7 +179,7 @@ class DataManagerSQL(DataManagerBase):
         return cities_list
 
     def get_top_tags(self):
-        query = "SELECT pt.id, pt.name FROM (SELECT tag_id, count(tag_id) AS tag_count FROM pytheas.profile_tag ppt  GROUP BY tag_id) AS ppta LEFT JOIN pytheas.tag pt ON pt.id = ppta.tag_id ORDER BY tag_count DESC limit 15"
+        query = "SELECT pt.id, pt.name, tag_count FROM (SELECT tag_id, count(tag_id) AS tag_count FROM pytheas.profile_tag ppt  GROUP BY tag_id) AS ppta LEFT JOIN pytheas.tag pt ON pt.id = ppta.tag_id ORDER BY tag_count DESC limit 15"
         mycursor = self.run_query(query)
         return mycursor
 

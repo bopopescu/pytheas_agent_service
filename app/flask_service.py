@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from app.service import Service
 
 app = Flask(__name__)
@@ -16,18 +16,17 @@ def get_attractions_for_profile():
         arg_city_id = request.args.get('city_id')
 
         if arg_profile_id is None or not is_represent_integer(arg_profile_id):
-            return 'Profile Id is missing or invalid'
+            abort(401, 'profile_id is missing or invalid.')
         if arg_city_id is not None and not is_represent_integer(arg_city_id):
-            return 'City Id is invalid. If you don''t wish to provide a valid vale, you may ignore this argument'
+            abort(401, 'city_id is invalid. If you don''t wish to provide a valid vale, you may ignore this argument.')
 
         profile_id = int(arg_profile_id)
         city_id = int(arg_profile_id) if arg_profile_id is not None else None
-
         agent_service = Service()
         result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
         return jsonify(result_vector)
-    except ValueError:
-        return ValueError
+    except:
+        abort(404, 'The server encountered an internal error. The profile or city may be missing')
 
 
 @app.route('/api/get_tags', methods=['GET'])
@@ -49,4 +48,4 @@ def is_represent_integer(s):
 
 
 if __name__ == '__main__':
-    app.run(port=80)
+    app.run(port=8080)
