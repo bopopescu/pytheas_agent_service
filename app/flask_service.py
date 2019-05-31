@@ -11,6 +11,8 @@ def index():
 
 @app.route('/api/get_attractions_for_profile', methods=['GET'])
 def get_attractions_for_profile():
+    profile_id = 0
+    city_id = 0
     try:
         arg_profile_id = request.args.get('profile_id')
         arg_city_id = request.args.get('city_id')
@@ -22,6 +24,10 @@ def get_attractions_for_profile():
 
         profile_id = int(arg_profile_id)
         city_id = int(arg_profile_id) if arg_profile_id is not None else None
+    except ValueError:
+        return ValueError
+
+    try:
         agent_service = Service()
         result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
         return jsonify(result_vector)
