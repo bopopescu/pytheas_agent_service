@@ -66,11 +66,12 @@ class Service:
             attractions_rates = {}
             for j in range(0, len(attractions_list)):
                 rate = float(format(m_predicted[i][j], '.1f'))
-                rate_attractions = []
-                if rate in attractions_rates:
-                    rate_attractions = attractions_rates[rate]
-                rate_attractions.append(attractions_list[j])
-                attractions_rates[rate] = rate_attractions
+                if rate >= 1:
+                    rate_attractions = []
+                    if rate in attractions_rates:
+                        rate_attractions = attractions_rates[rate]
+                    rate_attractions.append(attractions_list[j])
+                    attractions_rates[rate] = rate_attractions
             profiles_prediction_response[profiles_vector[i]] = attractions_rates
 
         #Async Store to DB
