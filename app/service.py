@@ -65,7 +65,7 @@ class Service:
         for i in range(0, len(profiles_vector)):
             attractions_rates = {}
             for j in range(0, len(attractions_list)):
-                rate = float(format(m_predicted[i][j], '.1f'))
+                rate = int(m_predicted[i][j])
                 if rate >= 1:
                     rate_attractions = []
                     if rate in attractions_rates:
