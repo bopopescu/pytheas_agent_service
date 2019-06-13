@@ -70,7 +70,6 @@ class DataManagerSQL(DataManagerBase):
         profiles_tags_db_results = self.run_stored_procedure("pytheas.get_all_profiles_tags_by_city", [city_id, profile_id])
         for result in profiles_tags_db_results:
             profiles_tags_db = result.fetchall()
-
         for row in profiles_ratings_db:
             curr_profile_id = row[0]
             attraction_id = row[1]
@@ -90,7 +89,6 @@ class DataManagerSQL(DataManagerBase):
             profiles_ratings[curr_profile_id] = profile_attractions
         if profile_id not in profiles_ratings:
             profiles_ratings[profile_id] = []
-
         for row in profiles_tags_db:
             curr_profile_id = row[0]
             tag_id = row[1]
@@ -99,11 +97,9 @@ class DataManagerSQL(DataManagerBase):
             profile_tags = {}
             if curr_profile_id in profiles_tags.keys():
                 profile_tags = profiles_tags[curr_profile_id]
-
-            profile_tags[tag_id] = 1
-            profiles_tags[curr_profile_id] = profile_tags
-        if profile_id not in profiles_tags:
-            profiles_tags[profile_id] = {}
+            if tag_id is not None and tag_id > 0:
+                profile_tags[tag_id] = 1
+                profiles_tags[curr_profile_id] = profile_tags
 
         df_users_ratings = pn.DataFrame.from_dict(profiles_ratings, orient='index')
         df_users_ratings.sort_index(inplace=True)
@@ -113,7 +109,6 @@ class DataManagerSQL(DataManagerBase):
         if profile_id not in profiles_tags:
             df_users_tags.loc[profile_id] = None
         df_users_tags.sort_index(inplace=True)
-
         return df_users_tags, df_users_ratings, attractions
 
     def load_attractions_tags_for_city(self, city_id):

@@ -18,10 +18,9 @@ class Service:
     def get_top_attraction_tags(self):
         return self.date_manager_sql.get_top_tags()
 
-    def predict_trip_for_profile(self, profile_id, city_id):
+    def predict_trip_for_profile(self, profile_id, city_id=None):
         predictions_result = []
         city_ids = []
-        city_id = 11  # paris
         if city_id is None:
             cities_length = 3
             cities_rates = self.predict_profile_cities_rate(profile_id)
@@ -34,12 +33,12 @@ class Service:
 
         for id in city_ids:
             attractions_vector = self.predict_attractions_for_profile_city(profile_id, id)
-            predictions_result.append({'city_id': city_id, 'attractions': attractions_vector})
+            predictions_result.append({'city_id': id, 'attractions': attractions_vector})
         return predictions_result
 
     def predict_attractions_for_profile_city(self, profile_id, city_id):
-        profile_city_vector = self.date_manager_sql.get_profile_city_recommendations(profile_id, city_id)
-        #profile_city_vector = None
+        #profile_city_vector = self.date_manager_sql.get_profile_city_recommendations(profile_id, city_id)
+        profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
             profiles_prediction_response = self.predict_attractions_for_city(city_id, profile_id)
             profile_city_vector = profiles_prediction_response[profile_id]
@@ -49,9 +48,8 @@ class Service:
 
     def predict_attractions_for_city(self, city_id, profile_id=-1):
         global df_profile_ratings
-
-        df_attractions_tags = self.date_manager_sql.load_attractions_tags_for_city(city_id)
         df_profile_tags, df_profile_ratings, attractions_list = self.date_manager_sql.load_users_attractions_tags(city_id, profile_id)
+        df_attractions_tags = self.date_manager_sql.load_attractions_tags_for_city(city_id)
         df_profile_tags[np.isnan(df_profile_tags)] = 0
         profiles_vector = list(df_profile_ratings.index.values)
 
@@ -105,29 +103,32 @@ class Service:
         return m_predicted
 
     def calculate_matrix_mf(self, df_users_tags, df_users_ratings, df_attractions_tags, attractions_list):
-        start_time = datetime.now()
+        try:
+            start_time = datetime.now()
 
-        user_tag_matrix = np.array(df_users_tags)
-        tag_attraction_matrix = np.array(df_attractions_tags)
-        rating_matrix, sparsity = self.bl.calculate_user_ratings_matrix(df_users_ratings, attractions_list)
+            user_tag_matrix = np.array(df_users_tags)
+            tag_attraction_matrix = np.array(df_attractions_tags)
+            rating_matrix, sparsity = self.bl.calculate_user_ratings_matrix(df_users_ratings, attractions_list)
 
-        r = rating_matrix
-        p = user_tag_matrix
-        q = tag_attraction_matrix
-        k = len(tag_attraction_matrix)
+            r = rating_matrix
+            p = user_tag_matrix
+            q = tag_attraction_matrix
+            k = len(tag_attraction_matrix)
 
-        m_np, m_nq = self.bl.matrix_factorization(r, p, q, k)
-        m_predicted = np.dot(m_np, m_nq.T)
+            m_np, m_nq = self.bl.matrix_factorization(r, p, q, k)
+            m_predicted = np.dot(m_np, m_nq.T)
 
-        end_time = datetime.now()
+            end_time = datetime.now()
 
-        m_predicted = self.bl.round_matrix(m_predicted)
-        self.bl.calculate_error_rate(rating_matrix, m_predicted)
+            m_predicted = self.bl.round_matrix(m_predicted)
+            self.bl.calculate_error_rate(rating_matrix, m_predicted)
 
-        total_time = end_time - start_time
-        print('Total Calc Time: {:4.2f}'.format(total_time.total_seconds()))
+            total_time = end_time - start_time
+            print('Total Calc Time: {:4.2f}'.format(total_time.total_seconds()))
 
-        return m_predicted
+            return m_predicted
+        except Exception as e:
+            print(e)
 
     def store_internal_datasets_to_db(self, df_users_tags, df_users_ratings):
         for user_name, tags_row in df_users_tags.iterrows():

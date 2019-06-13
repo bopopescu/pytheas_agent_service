@@ -23,7 +23,7 @@ def get_attractions_for_profile():
             abort(401, 'city_id is invalid. If you don''t wish to provide a valid vale, you may ignore this argument.')
 
         profile_id = int(arg_profile_id)
-        city_id = int(arg_profile_id) if arg_profile_id is not None else None
+        city_id = int(arg_city_id) if arg_city_id is not None else None
     except ValueError:
         return ValueError
 
@@ -54,4 +54,4 @@ def is_represent_integer(s):
 
 
 if __name__ == '__main__':
-    app.run(port=8080)
+    app.run(port=80801)
