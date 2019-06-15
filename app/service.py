@@ -37,7 +37,7 @@ class Service:
         return predictions_result
 
     def predict_attractions_for_profile_city(self, profile_id, city_id):
-        #profile_city_vector = self.date_manager_sql.get_profile_city_recommendations(profile_id, city_id)
+        profile_city_vector = self.date_manager_sql.get_profile_city_recommendations(profile_id, city_id)
         profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
             profiles_prediction_response = self.predict_attractions_for_city(city_id, profile_id)
@@ -73,7 +73,7 @@ class Service:
             profiles_prediction_response[profiles_vector[i]] = attractions_rates
 
         #Async Store to DB
-        #Thread(target=self.store_predictions_to_db, args=(city_id, profiles_prediction_response,)).start()
+        Thread(target=self.store_predictions_to_db, args=(city_id, profiles_prediction_response,)).start()
         return profiles_prediction_response
 
     def predict_profile_cities_rate(self, profile_id):
@@ -146,7 +146,10 @@ class Service:
 
     def store_predictions_to_db(self, city_id, profiles_prediction):
         for profile_id in profiles_prediction:
-            self.date_manager_sql.insert_profile_prediction(profile_id, city_id, profiles_prediction[profile_id])
+            if profile_id in(1, 2):
+                print("start saving for - " + str(profile_id))
+                self.date_manager_sql.insert_profile_prediction(profile_id, city_id, profiles_prediction[profile_id])
+                print("finished saving for - " + str(profile_id))
         self.date_manager_sql.migrate_city_predictions(city_id)
 
     def import_all_cities(self):
