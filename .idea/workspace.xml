@@ -18,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="39" column="8" lean-forward="true" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+            <state relative-caret-position="219">
+              <caret line="24" column="29" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -99,7 +99,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>matrix_factorization</find>
       <find>sel</find>
       <find>predict_trip_for_profile</find>
       <find>load_attractions_tags_for_city</find>
@@ -124,11 +123,12 @@
       <find>get_all_attractions_by_city</find>
       <find>get_all_a</find>
       <find>get_</find>
-      <find>store_predictions_to_db</find>
       <find>run_stored_procedure</find>
       <find>predict_profile_cities_rate</find>
       <find>get_profile_cities_rate</find>
       <find>predict_attractions_for_profile_city</find>
+      <find>import_all_cities</find>
+      <find>store_predictions_to_db</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -495,8 +495,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="39" column="8" lean-forward="true" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+        <state relative-caret-position="219">
+          <caret line="24" column="29" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
