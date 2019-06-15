@@ -42,6 +42,8 @@ class Service:
         if profile_city_vector is None or len(profile_city_vector) == 0:
             profiles_prediction_response = self.predict_attractions_for_city(city_id, profile_id)
             profile_city_vector = profiles_prediction_response[profile_id]
+        else:
+            print("---------=========================loaded vector for profile")
 
         profile_city_vector = self.bl.dictionary_sort_by_key(profile_city_vector)
         return profile_city_vector
@@ -146,6 +148,7 @@ class Service:
 
     def store_predictions_to_db(self, city_id, profiles_prediction):
         for profile_id in profiles_prediction:
+            #if profile_id in (1,2):
             print("start saving for - " + str(profile_id))
             self.date_manager_sql.insert_profile_prediction(profile_id, city_id, profiles_prediction[profile_id])
             print("finished saving for - " + str(profile_id))

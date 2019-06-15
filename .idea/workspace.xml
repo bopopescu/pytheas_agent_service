@@ -18,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="40" column="9" selection-start-line="40" selection-start-column="9" selection-end-line="40" selection-end-column="9" />
+            <state relative-caret-position="109">
+              <caret line="77" column="9" selection-start-line="77" selection-start-column="9" selection-end-line="77" selection-end-column="9" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -78,8 +78,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/data_manager/data_manager_sql.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="193" column="28" selection-start-line="193" selection-start-column="8" selection-end-line="193" selection-end-column="28" />
+            <state relative-caret-position="-299">
+              <caret line="144" column="40" selection-start-line="144" selection-start-column="8" selection-end-line="144" selection-end-column="40" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -105,8 +105,6 @@
       <find>name</find>
       <find>attraction_name</find>
       <find>calculate_user_ratings_matrix</find>
-      <find>profiles_prediction_response</find>
-      <find>get_profile_city_recommendations</find>
       <find>add_profile_attractions_prediction</find>
       <find>insert_profile_prediction</find>
       <find>--</find>
@@ -123,11 +121,13 @@
       <find>get_all_attractions_by_city</find>
       <find>get_all_a</find>
       <find>get_</find>
-      <find>run_stored_procedure</find>
       <find>predict_profile_cities_rate</find>
       <find>get_profile_cities_rate</find>
       <find>predict_attractions_for_profile_city</find>
       <find>import_all_cities</find>
+      <find>run_stored_procedure</find>
+      <find>get_profile_city_recommendations</find>
+      <find>profiles_prediction_response</find>
       <find>store_predictions_to_db</find>
     </findStrings>
   </component>
@@ -355,7 +355,7 @@
       <window_info id="Favorites" order="2" sideWeight="0.5006784" side_tool="true" weight="0.1654373" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.14539006" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4988086" visible="true" weight="0.2358156" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4988086" visible="true" weight="0.2819149" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -485,8 +485,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/data_manager/data_manager_sql.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="193" column="28" selection-start-line="193" selection-start-column="8" selection-end-line="193" selection-end-column="28" />
+        <state relative-caret-position="-299">
+          <caret line="144" column="40" selection-start-line="144" selection-start-column="8" selection-end-line="144" selection-end-column="40" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
@@ -495,8 +495,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="40" column="9" selection-start-line="40" selection-start-column="9" selection-end-line="40" selection-end-column="9" />
+        <state relative-caret-position="109">
+          <caret line="77" column="9" selection-start-line="77" selection-start-column="9" selection-end-line="77" selection-end-column="9" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
