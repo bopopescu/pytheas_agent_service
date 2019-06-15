@@ -38,7 +38,7 @@ class Service:
 
     def predict_attractions_for_profile_city(self, profile_id, city_id):
         profile_city_vector = self.date_manager_sql.get_profile_city_recommendations(profile_id, city_id)
-        profile_city_vector = None
+        #profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
             profiles_prediction_response = self.predict_attractions_for_city(city_id, profile_id)
             profile_city_vector = profiles_prediction_response[profile_id]
