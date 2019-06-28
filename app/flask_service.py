@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, request, jsonify, abort
 from app.service import Service
 
@@ -54,4 +56,4 @@ def is_represent_integer(s):
 
 
 if __name__ == '__main__':
-    app.run(port=5001)
+    app.run(host=os.environ.get('HOST', '127.0.0.1'), port=5001)
