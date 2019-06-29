@@ -15,9 +15,11 @@ def index():
 def get_attractions_for_profile():
     profile_id = 0
     city_id = 0
+    days = 1
     try:
         arg_profile_id = request.args.get('profile_id')
         arg_city_id = request.args.get('city_id')
+        days = int(request.args.get('days', 1))
 
         if arg_profile_id is None or not is_represent_integer(arg_profile_id):
             abort(401, 'profile_id is missing or invalid.')
@@ -31,7 +33,7 @@ def get_attractions_for_profile():
 
     try:
         agent_service = Service()
-        result_vector = agent_service.predict_trip_for_profile(profile_id, city_id)
+        result_vector = agent_service.predict_trip_for_profile(profile_id, city_id, days)
         return jsonify(result_vector)
     except:
         abort(404, 'The server encountered an internal error. The profile or city may be missing')

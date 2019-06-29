@@ -145,6 +145,7 @@ class DataManagerSQL(DataManagerBase):
     def get_profile_city_recommendations(self, profile_id, city_id):
         profile_vector = {}
         predictions_list = []
+        attractions_length = 0
         db_results = self.run_stored_procedure("pytheas.get_profile_attractions_prediction", [profile_id, city_id])
         for result in db_results:
             predictions_list = result.fetchall()
@@ -154,8 +155,9 @@ class DataManagerSQL(DataManagerBase):
             if rate in profile_vector:
                 rate_attractions = profile_vector[rate]
             rate_attractions.append(attraction_id)
+            attractions_length += 1
             profile_vector[rate] = rate_attractions
-        return profile_vector
+        return profile_vector, attractions_length
 
     def get_profile_cities_rate(self, profile_id):
         cities_ratings = {}

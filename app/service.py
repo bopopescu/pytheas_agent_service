@@ -18,35 +18,37 @@ class Service:
     def get_top_attraction_tags(self):
         return self.date_manager_sql.get_top_tags()
 
-    def predict_trip_for_profile(self, profile_id, city_id=None):
+    def predict_trip_for_profile(self, profile_id, city_id=None, days=1):
         predictions_result = []
         city_ids = []
+        cities_length = 3
+        min_attractions_length = days*6
         if city_id is None:
-            cities_length = 2
             cities_rates = self.predict_profile_cities_rate(profile_id)
-            if len(cities_rates) < cities_length:
-                cities_length = len(cities_rates)
             for i in range(0, cities_length):
                 city_ids.append(cities_rates[i][0])
         else:
             city_ids.append(city_id)
 
         for id in city_ids:
-            attractions_vector = self.predict_attractions_for_profile_city(profile_id, id)
-            predictions_result.append({'city_id': id, 'attractions': attractions_vector})
+            if len(predictions_result) >= cities_length:
+                break
+            attractions_vector, att_length = self.predict_attractions_for_profile_city(profile_id, id)
+            if att_length >= min_attractions_length:
+                predictions_result.append({'city_id': id, 'attractions': attractions_vector})
         return predictions_result
 
     def predict_attractions_for_profile_city(self, profile_id, city_id):
-        profile_city_vector = self.date_manager_sql.get_profile_city_recommendations(profile_id, city_id)
+        profile_city_vector, attractions_length = self.date_manager_sql.get_profile_city_recommendations(profile_id, city_id)
         #profile_city_vector = None
         if profile_city_vector is None or len(profile_city_vector) == 0:
-            profiles_prediction_response = self.predict_attractions_for_city(city_id, profile_id)
+            profiles_prediction_response, attractions_length = self.predict_attractions_for_city(city_id, profile_id)
             profile_city_vector = profiles_prediction_response[profile_id]
         else:
             print("---------=========================loaded vector for profile")
 
         profile_city_vector = self.bl.dictionary_sort_by_key(profile_city_vector)
-        return profile_city_vector
+        return profile_city_vector, attractions_length
 
     def predict_attractions_for_city(self, city_id, profile_id=-1):
         global df_profile_ratings
@@ -61,6 +63,7 @@ class Service:
 
         m_predicted = self.bl.union_prediction_matrixes(m_predicted, m_predicted_knn)
 
+        attractions_length = 0
         profiles_prediction_response = {}
         for i in range(0, len(profiles_vector)):
             attractions_rates = {}
@@ -71,12 +74,13 @@ class Service:
                     if rate in attractions_rates:
                         rate_attractions = attractions_rates[rate]
                     rate_attractions.append(attractions_list[j])
+                    attractions_length+=1
                     attractions_rates[rate] = rate_attractions
             profiles_prediction_response[profiles_vector[i]] = attractions_rates
 
         #Async Store to DB
         #Thread(target=self.store_predictions_to_db, args=(city_id, profiles_prediction_response,)).start()
-        return profiles_prediction_response
+        return profiles_prediction_response, attractions_length
 
     def predict_profile_cities_rate(self, profile_id):
         return self.date_manager_sql.get_profile_cities_rate(profile_id)
