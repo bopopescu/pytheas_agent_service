@@ -5,7 +5,7 @@ import os
 from bson import json_util
 from pymongo import MongoClient
 
-from app.data_manager.data_manager_base import DataManagerBase
+from app.data_manager.data_manager_base import DataManagerBase 
 
 
 class DataManagerMongoDB(DataManagerBase):

@@ -18,7 +18,7 @@ class Service:
     def get_top_attraction_tags(self):
         return self.date_manager_sql.get_top_tags()
 
-    def predict_trip_for_profile(self, profile_id, city_id=None, days=1):
+    def predict_trip_for_profile(self, profile_id, city_id=None, days=3):
         predictions_result = []
         city_ids = []
         cities_length = 3
